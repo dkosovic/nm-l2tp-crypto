@@ -93,7 +93,8 @@ crypto_file_format (const char *filename,
 	EC_KEY *ecdsa;
 	gsize taglen = 0;
 
-	*out_encrypted = FALSE;
+	if (out_encrypted != NULL)
+		*out_encrypted = FALSE;
 	file_format = NM_L2TP_CRYPTO_FILE_FORMAT_UNKNOWN;
 
 	if (!(array = file_to_g_byte_array (filename, error))) {
@@ -126,7 +127,8 @@ crypto_file_format (const char *filename,
 		if (!PKCS12_verify_mac (p12, "", 0)
             && !PKCS12_verify_mac (p12, NULL, 0))
 		{
-			*out_encrypted = TRUE;
+			if (out_encrypted != NULL)
+				*out_encrypted = TRUE;
 		}
 		PKCS12_free(p12);
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS12;
@@ -147,7 +149,8 @@ crypto_file_format (const char *filename,
 	p8 = PEM_read_bio_PKCS8 (in, NULL, NULL, NULL);
 	if (p8) {
 		X509_SIG_free (p8);
-		*out_encrypted = TRUE;
+		if (out_encrypted != NULL)
+			*out_encrypted = TRUE;
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS8_PEM;
 		goto out;
 	}
@@ -166,7 +169,8 @@ crypto_file_format (const char *filename,
 	p8 = d2i_PKCS8_bio (in, NULL);
 	if (p8) {
 		X509_SIG_free (p8);
-		*out_encrypted = TRUE;
+		if (out_encrypted != NULL)
+			*out_encrypted = TRUE;
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS8_DER;
 		goto out;
 	}
@@ -215,7 +219,8 @@ crypto_file_format (const char *filename,
 			if ( memcmp (array->data + taglen + 1, PEM_ENCRYPTED, strlen (PEM_ENCRYPTED)) == 0
 			  || memcmp (array->data + taglen + 2, PEM_ENCRYPTED, strlen (PEM_ENCRYPTED)) == 0)
 			{
-				*out_encrypted = TRUE;
+				if (out_encrypted != NULL)
+					*out_encrypted = TRUE;
 			}
 		}
 	}
