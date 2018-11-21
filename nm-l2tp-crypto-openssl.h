@@ -44,7 +44,7 @@ void crypto_deinit_openssl (void);
 
 NML2tpCryptoFileFormat
 crypto_file_format (const char *filename,
-                    gboolean *out_encrypted,
+                    gboolean *out_need_password,
                     GError **error);
 
 void

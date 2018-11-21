@@ -78,7 +78,7 @@ file_to_g_byte_array (const char *filename, GError **error)
 
 NML2tpCryptoFileFormat
 crypto_file_format (const char *filename,
-                    gboolean *out_encrypted,
+                    gboolean *out_need_password,
                     GError **error)
 {
 	GByteArray *array;
@@ -93,8 +93,8 @@ crypto_file_format (const char *filename,
 	EC_KEY *ecdsa;
 	gsize taglen = 0;
 
-	if (out_encrypted != NULL)
-		*out_encrypted = FALSE;
+	if (out_need_password != NULL)
+		*out_need_password = FALSE;
 	file_format = NM_L2TP_CRYPTO_FILE_FORMAT_UNKNOWN;
 
 	if (!(array = file_to_g_byte_array (filename, error))) {
@@ -127,8 +127,8 @@ crypto_file_format (const char *filename,
 		if (!PKCS12_verify_mac (p12, "", 0)
             && !PKCS12_verify_mac (p12, NULL, 0))
 		{
-			if (out_encrypted != NULL)
-				*out_encrypted = TRUE;
+			if (out_need_password != NULL)
+				*out_need_password = TRUE;
 		}
 		PKCS12_free(p12);
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS12;
@@ -149,8 +149,8 @@ crypto_file_format (const char *filename,
 	p8 = PEM_read_bio_PKCS8 (in, NULL, NULL, NULL);
 	if (p8) {
 		X509_SIG_free (p8);
-		if (out_encrypted != NULL)
-			*out_encrypted = TRUE;
+		if (out_need_password != NULL)
+			*out_need_password = TRUE;
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS8_PEM;
 		goto out;
 	}
@@ -169,8 +169,8 @@ crypto_file_format (const char *filename,
 	p8 = d2i_PKCS8_bio (in, NULL);
 	if (p8) {
 		X509_SIG_free (p8);
-		if (out_encrypted != NULL)
-			*out_encrypted = TRUE;
+		if (out_need_password != NULL)
+			*out_need_password = TRUE;
 		file_format = NM_L2TP_CRYPTO_FILE_FORMAT_PKCS8_DER;
 		goto out;
 	}
@@ -219,8 +219,8 @@ crypto_file_format (const char *filename,
 			if ( memcmp (array->data + taglen + 1, PEM_ENCRYPTED, strlen (PEM_ENCRYPTED)) == 0
 			  || memcmp (array->data + taglen + 2, PEM_ENCRYPTED, strlen (PEM_ENCRYPTED)) == 0)
 			{
-				if (out_encrypted != NULL)
-					*out_encrypted = TRUE;
+				if (out_need_password != NULL)
+					*out_need_password = TRUE;
 			}
 		}
 	}

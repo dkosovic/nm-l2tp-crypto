@@ -106,18 +106,18 @@ void test_crypto_file_format (char *filename)
 {
 	GError *err = NULL;
 	NML2tpCryptoFileFormat format = NM_L2TP_CRYPTO_FILE_FORMAT_UNKNOWN;
-	gboolean is_encrypted;
+	gboolean need_password;
 	gs_free char *filepath = NULL;
 
 	filepath = g_build_filename (TEST_CERT_DIR, (const char *) filename, NULL);
 	printf("testing crypto_file_format %s :\n", filename);
-	format = crypto_file_format (filepath, &is_encrypted, &err);
+	format = crypto_file_format (filepath, &need_password, &err);
 	if ( err != NULL ) {
 		fprintf(stderr, "\terr = %s\n", err->message);
 		g_error_free(err);
 		err = NULL;
 	}
-	printf("\tformat = %s , is encrypted = %d\n", cryptoFileFormatToString(format), is_encrypted);
+	printf("\tformat = %s , need password = %d\n", cryptoFileFormatToString(format), need_password);
 }
 
 void test_crypto_pkcs12_get_subject_name (const char *filename, const char *password)
