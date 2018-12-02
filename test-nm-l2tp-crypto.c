@@ -118,6 +118,9 @@ void test_crypto_file_format (char *filename)
 		err = NULL;
 	}
 	printf("\tformat = %s , need password = %d\n", cryptoFileFormatToString(format), need_password);
+
+	printf("testing NULL NULL crypto_file_format %s :\n", filename);
+	format = crypto_file_format (filepath, NULL, NULL);
 }
 
 void test_crypto_pkcs12_get_subject_name (const char *filename, const char *password)
@@ -172,7 +175,7 @@ void test_crypto_create_pkcs12_data (const char *pkey_filename,
 	}
 
 	printf("testing crypto_import_nss_pkcs12\n");
-	crypto_import_nss_pkcs12 (p12_array, password, &err);
+	crypto_import_nss_pkcs12 (p12_array, &err);
 	if (err != NULL ) {
 		fprintf(stderr, "\terr = %s\n", err->message);
 		g_error_free(err);
@@ -197,7 +200,7 @@ void test_crypto_decrypt_pkcs12_data (const char *filename, const char *password
 	}
 
 	printf("testing crypto_import_nss_pkcs12\n");
-	crypto_import_nss_pkcs12 (p12_array, password, &err);
+	crypto_import_nss_pkcs12 (p12_array, &err);
 	if (err != NULL ) {
 		fprintf(stderr, "\terr = %s\n", err->message);
 		g_error_free(err);
