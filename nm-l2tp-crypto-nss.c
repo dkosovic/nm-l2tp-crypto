@@ -117,6 +117,8 @@ crypto_deinit_nss (GError **error)
 	SECStatus ret;
 
 	if (initialized) {
+		g_free (nsspassword_file);
+		nsspassword_file = NULL;
 		ret = NSS_Shutdown ();
 		if (ret != SECSuccess) {
 			if (error != NULL) {
