@@ -10,9 +10,9 @@
 #include "nm-l2tp-crypto-openssl.h"
 #include "nm-l2tp-crypto-nss.h"
 
-#define TEST_CERT_DIR "./certs/"
-#define TEST_NSS_DIR "./nss-db/"
-#define TEST_PEM_DIR "./pem-output/"
+#define TEST_CERT_DIR "./certs"
+#define TEST_NSS_DIR "./nss-db"
+#define TEST_PEM_DIR "./pem-output"
 
 char *test_files[] = {
 	"ca-no-ending-newline.pem",
