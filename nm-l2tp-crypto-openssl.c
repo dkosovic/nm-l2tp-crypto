@@ -1,24 +1,6 @@
-/* -*- Mode: C; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- */
-
+// SPDX-License-Identifier: LGPL-2.1+
 /*
- * Douglas Kosovic <doug@uq.edu.au>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
- *
- * (C) 2018 The University of Queensland.
+ * Copyright (C) 2018 - 2019 Douglas Kosovic, <doug@uq.edu.au>
  */
 
 #include <stdio.h>
@@ -93,9 +75,14 @@ crypto_file_format (const char *filename,
 	EC_KEY *ecdsa;
 	gsize taglen = 0;
 
-	if (out_need_password != NULL)
+	if (out_need_password != NULL) {
 		*out_need_password = FALSE;
+	}
 	file_format = NM_L2TP_CRYPTO_FILE_FORMAT_UNKNOWN;
+
+	if (filename == NULL) {
+		return file_format;
+	}
 
 	if (!(array = file_to_g_byte_array (filename, error))) {
 		return file_format;
