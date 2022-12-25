@@ -28,13 +28,12 @@ char *test_files[] = {
 	"test_ca_cert.der",
 	"test_ca_cert.pem",
 	"test-ca-cert.pem",
-	"test-cert.p12",
+	"v3-certs-TDES.p12",
 	"test_key_and_cert.pem",
 	"test-key-and-cert.pem",
 	"test-key-only-decrypted.der",
 	"test-key-only-decrypted.pem",
 	"test-key-only.pem",
-	"test-key-only-traditional.der",
 	NULL
 };
 
@@ -48,7 +47,7 @@ char *pkey_password[][2] = {
 };
 
 char *pkcs12_password[][2] = {
-	{"test-cert.p12", "test"},
+	{"v3-certs-TDES.p12", "v3-certs"},
 	{"test2-cert.p12", "12345testing"},
 	{NULL, NULL}
 };
@@ -78,18 +77,6 @@ char *cryptoFileFormatToString(NML2tpCryptoFileFormat format) {
 			break;
 		case NM_L2TP_CRYPTO_FILE_FORMAT_PKCS12:
 			return "NM_L2TP_CRYPTO_FILE_FORMAT_PKCS12";
-			break;
-		case NM_L2TP_CRYPTO_FILE_FORMAT_RSA_PKEY_DER:
-			return "NM_L2TP_CRYPTO_FILE_FORMAT_RSA_PKEY_DER";
-			break;
-		case NM_L2TP_CRYPTO_FILE_FORMAT_RSA_PKEY_PEM:
-			return "NM_L2TP_CRYPTO_FILE_FORMAT_RSA_PKEY_PEM";
-			break;
-		case NM_L2TP_CRYPTO_FILE_FORMAT_DSA_PKEY_DER:
-			return "NM_L2TP_CRYPTO_FILE_FORMAT_DSA_PKEY_DER";
-			break;
-		case NM_L2TP_CRYPTO_FILE_FORMAT_DSA_PKEY_PEM:
-			return "NM_L2TP_CRYPTO_FILE_FORMAT_DSA_PKEY_PEM";
 			break;
 		case NM_L2TP_CRYPTO_FILE_FORMAT_ECDSA_PKEY_DER:
 			return "NM_L2TP_CRYPTO_FILE_FORMAT_ECDSA_PKEY_DER";
@@ -136,7 +123,7 @@ void test_crypto_pkcs12_get_subject_name (const char *filename, const char *pass
 	if ( err != NULL ) {
 		fprintf(stderr, "\terr = %s\n", err->message);
 		g_error_free(err);
-		err = NULL;
+		return;
 	}
 
 	printf("\tsubject_name=%s\n", subject_name_str->str);
@@ -278,8 +265,6 @@ int main (int argc, char **argv) {
 	GError *err = NULL;
 	int i;
 
-	crypto_init_openssl ();
-
 	printf("### Testing File Format ####\n");
 	i = 0;
 	while (test_files[i] != NULL) {
@@ -300,7 +285,6 @@ int main (int argc, char **argv) {
 	/* Setup NSS database directory */
 	if (g_mkdir_with_parents (TEST_NSS_DIR, 0755) != 0) {
 		fprintf(stderr, "failed to create NSS dir '%s' : %s\n", TEST_NSS_DIR, g_strerror (errno));
-		crypto_deinit_openssl();
 		exit(1);
 	}
 
@@ -332,7 +316,6 @@ int main (int argc, char **argv) {
 	/* Setup output pem directory */
 	if (g_mkdir_with_parents (TEST_PEM_DIR, 0755) != 0) {
 		fprintf(stderr, "failed to create PEM output dir '%s' : %s\n", TEST_PEM_DIR, g_strerror (errno));
-		crypto_deinit_openssl();
 		exit(1);
 	}
 
@@ -345,7 +328,6 @@ int main (int argc, char **argv) {
 
 	test_crypto_to_pem_file();
 
-	crypto_deinit_openssl();
 	crypto_deinit_nss (&err);
 	if ( err != NULL ) {
 		fprintf(stderr, "\terr = %s\n", err->message);
